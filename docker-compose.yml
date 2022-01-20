@@ -1,0 +1,95 @@
+version: '3'
+services:
+  # frontend container
+  # frontend_1:
+  #  container_name: frontendMain
+  #  build:
+  #    context: ./Frontend/frontendMain
+  #    dockerfile: Dockerfile
+  #  volumes:
+  #    - '/frontendMain/node_modules'
+  #  restart: on-failure
+  #  ports:
+  #    - '4203:4200'
+  #  environment:
+  #    - CHOKIDAR_USEPOLLING=true
+  #  depends_on:
+  #    - backend
+
+     
+  # backends container 
+  post_backend:
+   build: ./posts
+   command: python manage.py runserver 0.0.0.0:8000
+   volumes:
+     - ./posts:/code
+   restart: on-failure
+   ports:
+     - "8000:8000"
+   depends_on: 
+     - post_ms
+
+  comment_backend:
+   build: ./comments
+   command: python manage.py runserver 0.0.0.0:8001
+   volumes:
+     - ./comments:/code
+   restart: on-failure
+   ports:
+     - "8001:8001"
+   depends_on: 
+     - post_ms
+  
+# Mysql containers----------------------------------------------------------------
+  post_ms:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      - MYSQL_DATABASE=post_ms
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./posts/db:/var/lib/mysql
+    ports:
+      - "3309:3306"
+
+  comment_ms:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      - MYSQL_DATABASE=comment_ms
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./comments/db:/var/lib/mysql
+    ports:
+      - "3310:3306"
+
+  # for phpmyadmin to visualize all databases and tables through communication with django-mysql
+  phpmyadmin_post:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma_post
+    links:
+      - post_ms
+    environment:
+      PMA_HOST: post_ms
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+  
+  phpmyadmin_comment:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma_comment
+    links:
+      - comment_ms
+    environment:
+      PMA_HOST: comment_ms
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8082:80
