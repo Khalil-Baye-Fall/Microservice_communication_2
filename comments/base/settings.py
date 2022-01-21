@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-s_sk@f-^pf$0iv3h9uhbhyjp*5y=h(jjqs+^46t%@_w-hfc1b1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', 'http://post:8000']
 
 
 # Application definition
@@ -37,17 +37,37 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # news
+    'corsheaders',
+    'rest_framework',
+    
+    # apps
+    'api.apps.ApiConfig'
 ]
+
+# ELASTICSEARCH_DSL={
+#     'default': {
+#         'hosts': 'post_backend'
+#     },
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
+
 
 ROOT_URLCONF = 'base.urls'
 
@@ -75,8 +95,13 @@ WSGI_APPLICATION = 'base.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'comment_ms',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'comment_ms',
+        'PORT': '3306'
+        
     }
 }
 

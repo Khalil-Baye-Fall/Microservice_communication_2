@@ -1,5 +1,6 @@
 version: '3'
 services:
+
   # frontend container
   # frontend_1:
   #  container_name: frontendMain
@@ -18,27 +19,30 @@ services:
 
      
   # backends container 
-  post_backend:
+  post:
    build: ./posts
    command: python manage.py runserver 0.0.0.0:8000
    volumes:
      - ./posts:/code
    restart: on-failure
    ports:
-     - "8000:8000"
+     - 8000:8000
+   links:
+     - comment_backend
    depends_on: 
      - post_ms
-
-  comment_backend:
+   
+  comment:
    build: ./comments
    command: python manage.py runserver 0.0.0.0:8001
    volumes:
      - ./comments:/code
    restart: on-failure
    ports:
-     - "8001:8001"
+     - 8001:8001
    depends_on: 
-     - post_ms
+     - comment_ms
+   
   
 # Mysql containers----------------------------------------------------------------
   post_ms:
@@ -52,7 +56,8 @@ services:
     volumes:
       - ./posts/db:/var/lib/mysql
     ports:
-      - "3309:3306"
+      - 3309:3306
+    
 
   comment_ms:
     image: mysql:5.7.22
@@ -65,7 +70,8 @@ services:
     volumes:
       - ./comments/db:/var/lib/mysql
     ports:
-      - "3310:3306"
+      - 3310:3306
+   
 
   # for phpmyadmin to visualize all databases and tables through communication with django-mysql
   phpmyadmin_post:
@@ -80,7 +86,8 @@ services:
     restart: always
     ports:
       - 8081:80
-  
+   
+
   phpmyadmin_comment:
     image: phpmyadmin/phpmyadmin
     container_name: pma_comment
@@ -93,3 +100,5 @@ services:
     restart: always
     ports:
       - 8082:80
+   
+

@@ -4,3 +4,4 @@ mysqlclient
 cryptography
 mysql-connector-python
 djangorestframework
+requests
