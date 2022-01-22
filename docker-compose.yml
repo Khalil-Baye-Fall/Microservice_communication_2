@@ -2,20 +2,21 @@ version: '3'
 services:
 
   # frontend container
-  # frontend_1:
-  #  container_name: frontendMain
-  #  build:
-  #    context: ./Frontend/frontendMain
-  #    dockerfile: Dockerfile
-  #  volumes:
-  #    - '/frontendMain/node_modules'
-  #  restart: on-failure
-  #  ports:
-  #    - '4203:4200'
-  #  environment:
-  #    - CHOKIDAR_USEPOLLING=true
-  #  depends_on:
-  #    - backend
+  frontend:
+   container_name: frontend
+   build:
+     context: ./Frontend/frontend
+     dockerfile: Dockerfile
+   volumes:
+     - '/frontend/node_modules'
+   restart: on-failure
+   ports:
+     - '4200:4200'
+   environment:
+     - CHOKIDAR_USEPOLLING=true
+   depends_on:
+     - post
+     - comment
 
      
   # backends container 
